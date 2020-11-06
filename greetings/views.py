@@ -19,11 +19,14 @@ def index(request):
 
 
 class greetingsList(APIView):
+
+    template = 'index.html';
     def get(self,request):
         greetings1 = Greeting.objects.all()
         #return HttpResponse(greetings1[0].name)
         serializer = GreetingSerializer(greetings1, many=True)
-        return Response(serializer.data)
+        #return Response(serializer.data)
+        return render(request, self.template, {'greetings': serializer.data})
 
 class insert(APIView):
     def __maxId(self):
