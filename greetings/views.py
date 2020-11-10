@@ -1,6 +1,6 @@
 # greetings/views.py
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,19 +13,20 @@ from django.db import connection
 
 from django.utils import timezone
 
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.models import User
+
 # Create your views here.
 def index(request):
     return HttpResponse("Hello, world. You're at the greetings index 4.")
-
 
 class greetingsList(APIView):
 
     template = 'index.html';
     def get(self,request):
         greetings1 = Greeting.objects.all()
-        #return HttpResponse(greetings1[0].name)
         serializer = GreetingSerializer(greetings1, many=True)
-        #return Response(serializer.data)
         return render(request, self.template, {'greetings': serializer.data})
 
 class insert(APIView):
@@ -43,3 +44,47 @@ class insert(APIView):
         greeting.surname = request.GET.get('surname', "surname" + sysdateString)
         greeting.save()
         return HttpResponse(greeting.name + " " + greeting.surname)
+
+
+
+
+
+class Login(APIView):
+    template = 'login.html'
+
+    def get(self, request):
+        form = AuthenticationForm()
+        return render(request, self.template, {'form': form})
+
+    def post(self, request):
+        form = AuthenticationForm(request.POST)
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect('/greetings/getList')
+        else:
+            return render(request, self.template, {'form': form})
+
+
+
+
+class Register(APIView):
+    template = 'register.html'
+
+    def get(self, request):
+        return render(request, self.template)
+
+
+    def post(self, request):
+        form = AuthenticationForm(request.POST)
+        user = User.objects.create_user(username=request.POST['username'], password=request.POST['password'])
+        user.last_name = request.POST['lastName']
+        user.first_name = request.POST['firstName']
+
+        if request.POST['password'] != request.POST['confirmPassword']:
+            return render(request, self.template, {'form': form})
+        else:
+            user.save()
+            return HttpResponseRedirect('/greetings/login')
