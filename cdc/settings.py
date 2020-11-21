@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'greetings',
     'rest_framework',
+    'kafka'
 ]
 
 MIDDLEWARE = [

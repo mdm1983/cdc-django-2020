@@ -17,9 +17,43 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 
+# Import KafkaProducer from Kafka library
+from kafka import KafkaProducer
+
+# Import KafkaConsumer from Kafka library
+from kafka import KafkaConsumer
+
+# Import JSON module to serialize data
+import json
+
 # Create your views here.
 def index(request):
-    return HttpResponse("Hello, world. You're at the greetings index 4.")
+
+    # Initialize producer variable and set parameter for JSON encode
+    producer = KafkaProducer(bootstrap_servers =
+    ['localhost:9092'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+
+    # Send data in JSON format
+    producer.send('JSONtopic', {'name': 'fahmida','email':'fahmida@gmail.com'})
+    
+    # Print message
+    print("Message Sent to JSONtopic")
+
+    # Initialize consumer variable and set property for JSON decode
+    consumer = KafkaConsumer ('JSONtopic',bootstrap_servers = ['localhost:9092'],
+    value_deserializer=lambda m: json.loads(m.decode('utf-8')))
+
+    outputString = ""
+    # Read data from kafka
+    for message in consumer:
+        outputString = outputString + "\nConsumer records:\n"
+        outputString = outputString + message
+        outputString = outputString + "\nReading from JSON data\n"
+        outputString = outputString + "Name:" + message[6]['name']
+        outputString = outputString + "Email:" + message[6]['email']
+
+    return HttpResponse(outputString)
+    #return HttpResponse("Hello, world. You're at the greetings index 4.")
 
 class greetingsList(APIView):
 
