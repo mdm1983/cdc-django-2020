@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from . serializers import GreetingSerializer
+from . serializers import MovimentoOneSerializer
 from . models import Greeting
 
 from django.utils.timezone import now
@@ -17,6 +17,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 
+
+
 # Import KafkaProducer from Kafka library
 from kafka import KafkaProducer
 
@@ -25,6 +27,19 @@ from kafka import KafkaConsumer
 
 # Import JSON module to serialize data
 import json
+
+from datetime import datetime
+from random import randrange
+from datetime import timedelta
+from random import seed
+from random import randint
+
+from . models import MovimentoOne
+
+import pytz
+
+
+
 
 # Create your views here.
 def index(request):
@@ -59,25 +74,48 @@ class greetingsList(APIView):
 
     template = 'index.html';
     def get(self,request):
-        greetings1 = Greeting.objects.all()
-        serializer = GreetingSerializer(greetings1, many=True)
-        return render(request, self.template, {'greetings': serializer.data})
+        cursor = connection.cursor()
+        recordsMovimento = MovimentoOne.objects.all().filter(email=request.user.username)
+        serializer = MovimentoOneSerializer(recordsMovimento, many=True)
+        return render(request, self.template, {'greetings_movimentoone': serializer.data, 'loggedas': request.user.username})
 
 class insert(APIView):
     def __maxId(self):
         cursor = connection.cursor()
-        cursor.execute('SELECT max(id)+1 as max_id FROM greetings_greeting')
+        cursor.execute('SELECT max(id)+1 as max_id FROM greetings_movimentoone')
         return cursor.fetchone()[0]
 
+    def __random_date(self, start, end):
+        """
+        This function will return a random datetime between two datetime 
+        objects.
+        """
+        delta = end - start
+        int_delta = (delta.days * 24 * 60 * 60) + delta.seconds
+        random_second = randrange(int_delta)
+        return start + timedelta(seconds=random_second)
+
     def get(self, request):
+
+        d1 = datetime.strptime('1/1/2020 GMT', '%m/%d/%Y %Z')
+        d2 = datetime.strptime('12/31/2020 GMT', '%m/%d/%Y %Z')
+        email = request.GET.get('email', "")
         sysdate = timezone.now()
-        sysdateString = str(sysdate.day) + "_" + str(sysdate.month) + "_" + str(sysdate.year)
-        greeting = Greeting()
-        greeting.id = self.__maxId()
-        greeting.name = request.GET.get('name', "name" + sysdateString)
-        greeting.surname = request.GET.get('surname', "surname" + sysdateString)
-        greeting.save()
-        return HttpResponse(greeting.name + " " + greeting.surname)
+        sysdateString = str(sysdate.day) + "." + str(sysdate.month) + "." + str(sysdate.year)
+
+        for _ in range(50):
+            movimento = MovimentoOne()
+            movimento.id= self.__maxId()
+            movimento.datamov = self.__random_date(d1, d2)
+            movimento.datamov =  movimento.datamov.replace(tzinfo=timezone.utc)
+            movimento.email = email
+            movimento.importo = randint(-100, 100)
+            movimento.causale = "auto generated " + sysdateString
+            movimento.save()
+
+
+        
+        return HttpResponse("auto generated " + sysdateString)
 
 
 

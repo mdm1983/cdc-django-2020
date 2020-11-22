@@ -103,7 +103,7 @@
                     </div>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
-                        Start Bootstrap
+                        {{ loggedas }}
                     </div>
                 </nav>
             </div>
@@ -182,8 +182,9 @@
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>
-                                                <th>Name</th>
-                                                <th>Surname</th>
+                                                <th>Data</th>
+                                                <th>Importo</th>
+                                                <th>Causale</th>
                                                 <!--<th>Position</th>
                                                 <th>Office</th>
                                                 <th>Age</th>
@@ -193,8 +194,9 @@
                                         </thead>
                                         <tfoot>
                                             <tr>
-                                                <th>Name</th>
-                                                <th>Surname</th>
+                                                <th>Data</th>
+                                                <th>Importo</th>
+                                                <th>Causale</th>
                                                 <!--<th>Position</th>
                                                 <th>Office</th>
                                                 <th>Age</th>
@@ -203,10 +205,11 @@
                                             </tr>
                                         </tfoot>
                                         <tbody>
-                                              {% for greeting in greetings %}
+                                              {% for movimento in greetings_movimentoone %}
                                               <tr>
-                                                <td>{{ greeting.name }}</td>
-                                                <td>{{ greeting.surname }}</td>
+                                                <td>{{ movimento.datamov }}</td>
+                                                <td>{{ movimento.importo }}</td>
+                                                <td>{{ movimento.causale }}</td>
                                                <!-- <td>{{ employee.position }}</td>
                                                 <td>{{ employee.office }}</td>
                                                 <td>{{ employee.age }}</td>

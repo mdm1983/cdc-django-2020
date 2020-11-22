@@ -9,7 +9,7 @@ urlpatterns = [
     #http://localhost:8000/greetings/getList/
 
     url(r'^insert/', views.insert.as_view()),
-    #http://localhost:8000/greetings/insert?name=nome&surname=cognome
+    #http://localhost:8000/greetings/insert?email=
 
     url(r'^login/', views.Login.as_view(), name='login'),
     #http://localhost:8000/greetings/login/

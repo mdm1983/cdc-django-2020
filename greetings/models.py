@@ -9,8 +9,9 @@ class Greeting(models.Model):
 
     greeting = models.TextField()
 
-class Dario(models.Model):
-    dataMovimento = models.DateField()
+class MovimentoOne(models.Model):
+    datamov = models.DateTimeField()
     causale = models.TextField()
     importo = models.IntegerField()
-    idutente = models.TextField()
+    email = models.TextField()
+
