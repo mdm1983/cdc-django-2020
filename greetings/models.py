@@ -15,3 +15,20 @@ class MovimentoOne(models.Model):
     importo = models.IntegerField()
     email = models.TextField()
 
+class MovimentoOneHistogram(models.Model):
+    datamov = models.DateField()
+    importo = models.IntegerField()
+    email = models.TextField()
+    class Meta:
+        managed = False
+        db_table = 'greetings_movimentoonehistogram'
+
+class MovimentoOneLine(models.Model):
+    datamov = models.DateField()
+    importo = models.IntegerField()
+    email = models.TextField()
+    class Meta:
+        managed = False
+        db_table = 'greetings_movimentooneline'
+
+
