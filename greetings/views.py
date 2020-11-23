@@ -109,6 +109,7 @@ class insert(APIView):
         email = request.GET.get('email', "")
         sysdate = timezone.now()
         sysdateString = str(sysdate.day) + "." + str(sysdate.month) + "." + str(sysdate.year)
+        negativo = False
 
         for _ in range(50):
             movimento = MovimentoOne()
@@ -116,7 +117,12 @@ class insert(APIView):
             movimento.datamov = self.__random_date(d1, d2)
             movimento.datamov =  movimento.datamov.replace(tzinfo=timezone.utc)
             movimento.email = email
-            movimento.importo = randint(-100, 100)
+            if (negativo):
+                movimento.importo = randint(-50, -1)
+                negativo = False
+            else:
+                movimento.importo = randint(1, 100)
+                negativo = True
             movimento.causale = "auto generated " + sysdateString
             movimento.save()
 

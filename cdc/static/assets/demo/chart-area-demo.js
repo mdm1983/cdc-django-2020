@@ -23,22 +23,41 @@ for (i = 0; i < listData.length; i++) {
     minData = Number(listData[i].value);
   }
 }
+
+var maxDataNew = 10;
+while (maxDataNew < maxData){
+  maxDataNew = maxDataNew * 10;
+} 
+while (maxDataNew > maxData){
+  maxDataNew = maxDataNew / 2;
+} 
+maxData = maxDataNew * 2;
+
+var minDataNew = -10;
+while (minDataNew > minData){
+  minDataNew = minDataNew * 10;
+} 
+while (minDataNew < minData){
+  minDataNew = minDataNew / 2;
+} 
+minData = minDataNew * 2;
+
 var myLineChart = new Chart(ctx, {
   type: 'line',
   data: {
     labels: labelsData,
     datasets: [{
       label: "Balance",
-      lineTension: 0.3,
+      lineTension: 0,
       backgroundColor: "rgba(2,117,216,0.2)",
       borderColor: "rgba(2,117,216,1)",
-      pointRadius: 5,
+      pointRadius: 0,
       pointBackgroundColor: "rgba(2,117,216,1)",
       pointBorderColor: "rgba(255,255,255,0.8)",
-      pointHoverRadius: 5,
+      pointHoverRadius: 0,
       pointHoverBackgroundColor: "rgba(2,117,216,1)",
       pointHitRadius: 50,
-      pointBorderWidth: 2,
+      pointBorderWidth: 0,
       data: dataData,
     }],
   },
@@ -52,14 +71,14 @@ var myLineChart = new Chart(ctx, {
           display: false
         },
         ticks: {
-          maxTicksLimit: 7
+          maxTicksLimit: 3
         }
       }],
       yAxes: [{
         ticks: {
           min: minData,
           max: maxData,
-          maxTicksLimit: 5
+          maxTicksLimit: 2
         },
         gridLines: {
           color: "rgba(0, 0, 0, .125)",
