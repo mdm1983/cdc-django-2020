@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
             """
             DROP VIEW IF EXISTS greetings_movimentolineone;
             CREATE OR REPLACE VIEW greetings_movimentolineone as
-            select datamov as id, datamov, email, (select COALESCE(sum(importo),0) as importo from greetings_movimentoone where datamov<movim.datamov and email = movim.email) from greetings_movimentoone as movim group by id, datamov,email order by datamov;
+            select distinct(datamov) as id, datamov as datamov, email, (select COALESCE(sum(importo),0) as importo from greetings_movimentoone where datamov<movim.datamov and email = movim.email) from greetings_movimentoone as movim group by id, datamov,email order by datamov;
             """
         )
     ]
