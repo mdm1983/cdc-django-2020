@@ -1,0 +1,5 @@
+--ISTOGRAMMA
+--select datamov, email, sum(importo) from greetings_movimentoone group by datamov,email order by datamov
+
+--LINEE
+--select datamov, email, (select COALESCE(sum(importo),0) from greetings_movimentoone where datamov<movim.datamov and email = movim.email) from greetings_movimentoone as movim group by datamov,email order by datamov

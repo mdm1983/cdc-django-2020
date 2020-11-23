@@ -10,7 +10,7 @@ class Greeting(models.Model):
     greeting = models.TextField()
 
 class MovimentoOne(models.Model):
-    datamov = models.DateTimeField()
+    datamov = models.DateField()
     causale = models.TextField()
     importo = models.IntegerField()
     email = models.TextField()
