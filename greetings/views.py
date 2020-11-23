@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from . serializers import MovimentoOneSerializer
+from . serializers import MovimentoOneSerializer, MovimentoHistogramSerializer, MovimentoLineSerializer
 from . models import Greeting
 
 from django.utils.timezone import now
@@ -34,7 +34,7 @@ from datetime import timedelta
 from random import seed
 from random import randint
 
-from . models import MovimentoOne
+from . models import MovimentoOne, MovimentoHistogramOne, MovimentoLineOne
 
 import pytz
 
@@ -45,18 +45,21 @@ import pytz
 def index(request):
 
     # Initialize producer variable and set parameter for JSON encode
-    producer = KafkaProducer(bootstrap_servers =
-    ['localhost:9092'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+   # producer = KafkaProducer(bootstrap_servers =
+    #['localhost:9092'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+
+    producer = KafkaProducer(bootstrap_servers=['localhost:9092'], 
+           api_version=(0, 10, 1))
+
+     # Initialize consumer variable and set property for JSON decode
+    consumer = KafkaConsumer ('JSONtopic',bootstrap_servers = ['localhost:9092'], 
+           api_version=(0, 10, 1))
 
     # Send data in JSON format
     producer.send('JSONtopic', {'name': 'fahmida','email':'fahmida@gmail.com'})
     
     # Print message
     print("Message Sent to JSONtopic")
-
-    # Initialize consumer variable and set property for JSON decode
-    consumer = KafkaConsumer ('JSONtopic',bootstrap_servers = ['localhost:9092'],
-    value_deserializer=lambda m: json.loads(m.decode('utf-8')))
 
     outputString = ""
     # Read data from kafka
@@ -77,7 +80,11 @@ class greetingsList(APIView):
         cursor = connection.cursor()
         recordsMovimento = MovimentoOne.objects.all().filter(email=request.user.username)
         serializer = MovimentoOneSerializer(recordsMovimento, many=True)
-        return render(request, self.template, {'greetings_movimentoone': serializer.data, 'loggedas': request.user.username})
+        recordsMovimentoHistogram = MovimentoHistogramOne.objects.all().filter(email=request.user.username)
+        serializerHistogram = MovimentoHistogramSerializer(recordsMovimentoHistogram, many=True)
+        recordsMovimentoLine = MovimentoLineOne.objects.all().filter(email=request.user.username)
+        serializerLine = MovimentoLineSerializer(recordsMovimentoLine, many=True)
+        return render(request, self.template, {'greetings_movimentoone': serializer.data, 'loggedas': request.user.username, 'greetings_movimentohistogram': serializerHistogram.data, 'greetings_movimentoline': serializerLine.data })
 
 class insert(APIView):
     def __maxId(self):

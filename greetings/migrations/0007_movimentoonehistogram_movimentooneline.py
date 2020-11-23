@@ -13,7 +13,6 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MovimentoOneHistogram',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('datamov', models.DateField()),
                 ('importo', models.IntegerField()),
                 ('email', models.TextField()),
@@ -26,7 +25,6 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MovimentoOneLine',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('datamov', models.DateField()),
                 ('importo', models.IntegerField()),
                 ('email', models.TextField()),
@@ -39,15 +37,13 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             """
             DROP VIEW IF EXISTS greetings_movimentoonehistogram;
-            CREATE OR REPLACE VIEW greetings_movimentoonehistogram as
-            select datamov, email, sum(importo) as importo from greetings_movimentoone group by datamov,email order by datamov;
+           
             """
         ),
         migrations.RunSQL(
             """
             DROP VIEW IF EXISTS greetings_movimentooneline;
-            CREATE OR REPLACE VIEW greetings_movimentooneline as
-            select datamov, email, (select COALESCE(sum(importo),0) as importo from greetings_movimentoone where datamov<movim.datamov and email = movim.email) from greetings_movimentoone as movim group by datamov,email order by datamov;
+            
             """
         )
     ]
