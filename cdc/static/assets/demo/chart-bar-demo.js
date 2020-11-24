@@ -4,15 +4,35 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 
 // Bar Chart Example
 var ctx = document.getElementById("myBarChart");
+var labelsData = [];
+var list = document.getElementsByName("histolabel");
+var i = 1;
+for (i = 0; i < list.length; i++) {
+  labelsData.push(list[i].value);
+}
+var dataData = [];
+var listData = document.getElementsByName("histodata");
+var maxData = 0;
+var minData = 0;
+for (i = 0; i < listData.length; i++) {
+  dataData.push(listData[i].value);
+  if (Number(listData[i].value)>maxData){
+    maxData = Number(listData[i].value);
+  } 
+  if (Number(listData[i].value)<minData){
+    minData = Number(listData[i].value);
+  }
+}
+
 var myLineChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: labelsData,
     datasets: [{
-      label: "Revenue",
+      label: "Totale",
       backgroundColor: "rgba(2,117,216,1)",
       borderColor: "rgba(2,117,216,1)",
-      data: [4215, 5312, 6251, 7841, 9821, 14984],
+      data: dataData,
     }],
   },
   options: {
@@ -25,14 +45,14 @@ var myLineChart = new Chart(ctx, {
           display: false
         },
         ticks: {
-          maxTicksLimit: 6
+          maxTicksLimit: 12
         }
       }],
       yAxes: [{
         ticks: {
-          min: 0,
-          max: 15000,
-          maxTicksLimit: 5
+          min: minData,
+          max: maxData,
+          maxTicksLimit: 2
         },
         gridLines: {
           display: true

@@ -24,30 +24,12 @@ for (i = 0; i < listData.length; i++) {
   }
 }
 
-var maxDataNew = 10;
-while (maxDataNew < maxData){
-  maxDataNew = maxDataNew * 10;
-} 
-while (maxDataNew > maxData){
-  maxDataNew = maxDataNew / 2;
-} 
-maxData = maxDataNew * 2;
-
-var minDataNew = -10;
-while (minDataNew > minData){
-  minDataNew = minDataNew * 10;
-} 
-while (minDataNew < minData){
-  minDataNew = minDataNew / 2;
-} 
-minData = minDataNew * 2;
-
 var myLineChart = new Chart(ctx, {
   type: 'line',
   data: {
     labels: labelsData,
     datasets: [{
-      label: "Balance",
+      label: "Saldo",
       lineTension: 0,
       backgroundColor: "rgba(2,117,216,0.2)",
       borderColor: "rgba(2,117,216,1)",
@@ -71,7 +53,7 @@ var myLineChart = new Chart(ctx, {
           display: false
         },
         ticks: {
-          maxTicksLimit: 3
+          maxTicksLimit: 12
         }
       }],
       yAxes: [{
