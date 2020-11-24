@@ -44,16 +44,19 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
             """
-            DROP VIEW IF EXISTS greetings_movimentohistogramone;
-            CREATE OR REPLACE VIEW greetings_movimentohistogramone as
-            select datamov as id, datamov, email, sum(importo) as importo from greetings_movimentoone group by id, datamov,email order by datamov;
-            """
-        ),
-        migrations.RunSQL(
-            """
             DROP VIEW IF EXISTS greetings_movimentolineone;
+            DROP VIEW IF EXISTS greetings_movimentohistogramone;
+
+            CREATE OR REPLACE VIEW greetings_movimentohistogramtwo as
+            select distinct(cast(date_trunc('month', datamov) as date)) as datamov2, email, sum(importo) as importo from greetings_movimentoone group by datamov2, email order by datamov2;
+            
+            CREATE OR REPLACE VIEW greetings_movimentohistogramone as
+            select datamov2 as id, datamov2 as datamov, email, importo from greetings_movimentohistogramtwo;
+
             CREATE OR REPLACE VIEW greetings_movimentolineone as
-            select distinct(datamov) as id, datamov as datamov, email, (select COALESCE(sum(importo),0) as importo from greetings_movimentoone where datamov<movim.datamov and email = movim.email) from greetings_movimentoone as movim group by id, datamov,email order by datamov;
+            select distinct(datamov) as id, datamov as datamov, email, (select COALESCE(sum(importo),0) as importo from greetings_movimentohistogramone where datamov<movim.datamov and email = movim.email) from greetings_movimentohistogramone as movim group by id, datamov,email order by datamov;
+           
+            
             """
         )
     ]
