@@ -1,0 +1,1 @@
+https://resources.rescale.com/using-database-views-in-django-orm/

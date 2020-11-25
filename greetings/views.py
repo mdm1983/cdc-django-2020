@@ -38,37 +38,21 @@ from . models import MovimentoOne, MovimentoHistogramOne, MovimentoLineOne
 
 import pytz
 
+from .producer import producer
+
 
 
 
 # Create your views here.
 def index(request):
 
-    # Initialize producer variable and set parameter for JSON encode
-   # producer = KafkaProducer(bootstrap_servers =
-    #['localhost:9092'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+    producer.main()
 
-    producer = KafkaProducer(bootstrap_servers=['localhost:9092'], 
-           api_version=(0, 10, 1))
+    # To consume latest messages and auto-commit offsets
+    consumer = KafkaConsumer ('Topic1',bootstrap_servers = ['10.7.10.156:9092'], api_version=(0, 10, 1))
 
-     # Initialize consumer variable and set property for JSON decode
-    consumer = KafkaConsumer ('JSONtopic',bootstrap_servers = ['localhost:9092'], 
-           api_version=(0, 10, 1))
-
-    # Send data in JSON format
-    producer.send('JSONtopic', {'name': 'fahmida','email':'fahmida@gmail.com'})
-    
-    # Print message
-    print("Message Sent to JSONtopic")
-
-    outputString = ""
-    # Read data from kafka
     for message in consumer:
-        outputString = outputString + "\nConsumer records:\n"
         outputString = outputString + message
-        outputString = outputString + "\nReading from JSON data\n"
-        outputString = outputString + "Name:" + message[6]['name']
-        outputString = outputString + "Email:" + message[6]['email']
 
     return HttpResponse(outputString)
     #return HttpResponse("Hello, world. You're at the greetings index 4.")

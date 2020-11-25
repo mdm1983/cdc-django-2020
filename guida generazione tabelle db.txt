@@ -1,0 +1,43 @@
+Aprire la console di django (porta 8000) per creare lo schema "greetings_greeting"
+
+quando creaiamo un nuovo class ("Dario") in models.py
+# python manage.py makemigrations
+Migrations for 'greetings':
+  greetings/migrations/0003_dario.py
+    - Create model Dario
+
+per eseguire gli script sotto greetings/migrations
+# python manage.py migrate --fake-initial
+
+
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, greetings, sessions
+Running migrations:
+  No migrations to apply.
+
+------------------
+Aprire la console di postgres (porta 5432)
+
+# su postgres
+postgres@0d324aa85c5a:/$ psql
+psql (13.0 (Debian 13.0-1.pgdg100+1))
+Type "help" for help.
+
+postgres=# Select now();
+              now
+-------------------------------
+ 2020-10-20 14:17:27.690626+00
+(1 row)
+
+postgres=# SELECT "greetings_greeting"."id", "greetings_greeting"."name", "greetings_greeting"."surname", "greetings_greeting"."greeting" FROM "greetings_greeting";
+ id | name | surname | greeting
+----+------+---------+----------
+(0 rows)
+
+postgres=# insert into "greetings_greeting" values('1', 'dario', 'balda', 'greetingBoh');
+INSERT 0 1
+postgres=# SELECT "greetings_greeting"."id", "greetings_greeting"."name", "greetings_greeting"."surname", "greetings_greeting"."greeting" FROM "greetings_greeting";
+ id | name  |   surname   | greeting
+----+-------+-------------+----------
+  1 | dario | greetingBoh | balda
+(1 row)
