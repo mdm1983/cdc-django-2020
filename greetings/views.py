@@ -50,8 +50,12 @@ def index(request):
 
     # To consume latest messages and auto-commit offsets
     consumer = KafkaConsumer ('Topic1',bootstrap_servers = ['10.7.10.156:9092'], api_version=(0, 10, 1))
+    #ip dinamico della macchina di dario
+
+    print('consumer created')
 
     for message in consumer:
+        print(message)
         outputString = outputString + message
 
     return HttpResponse(outputString)
