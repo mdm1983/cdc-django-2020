@@ -40,23 +40,30 @@ import pytz
 
 from .producer import producer
 
+from kafka import TopicPartition
 
-
+from time import sleep
 
 # Create your views here.
 def index(request):
 
-    producer.main()
+    KAFKA_TOPIC = 'Topic5'
 
     # To consume latest messages and auto-commit offsets
-    consumer = KafkaConsumer ('Topic1',bootstrap_servers = ['10.7.10.156:9092'], api_version=(0, 10, 1))
+    consumer = KafkaConsumer (KAFKA_TOPIC,bootstrap_servers = ['10.7.9.71:9092'], api_version=(0, 10, 1),
+    auto_offset_reset='earliest', 
+    #group_id='myTestGroupId', 
+    consumer_timeout_ms=3000)
     #ip dinamico della macchina di dario
 
-    print('consumer created')
+    consumer.subscribe(KAFKA_TOPIC)
 
+    producer.main()
+
+    outputString = ''
     for message in consumer:
-        print(message)
-        outputString = outputString + message
+        outputString = outputString + message.value.decode("utf-8")
+        outputString = outputString + ";"
 
     return HttpResponse(outputString)
     #return HttpResponse("Hello, world. You're at the greetings index 4.")

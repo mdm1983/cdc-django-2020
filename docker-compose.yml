@@ -37,7 +37,7 @@ services:
     environment:
       - KAFKA_BROKER_ID=1
       #- KAFKA_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://10.7.10.156:9092 #ip dinamico della macchina di dario
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://10.7.9.71:9092 #ip dinamico della macchina di dario
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:PLAINTEXT

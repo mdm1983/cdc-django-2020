@@ -3,10 +3,10 @@ from kafka.errors import KafkaError
 
 class producer:
     def main():
-        producer = KafkaProducer(bootstrap_servers=['10.7.10.156:9092'], api_version=(0, 10, 1))
+        KAFKA_TOPIC = 'Topic5'
+        producer = KafkaProducer(bootstrap_servers=['10.7.9.71:9092'], api_version=(0, 10, 1))
         #ip dinamico della macchina di dario
-        print('producer created')
-        producer.send('Topic1', b'Hello, World!')
-        print('producer send 1')
-        producer.send('Topic2', key=b'message-two', value=b'This is Kafka-Python')
-        print('producer send 2')
+        producer.send(KAFKA_TOPIC, b'Hello, World!')
+        producer.send(KAFKA_TOPIC, key=b'message-two', value=b'This is Kafka-Python')
+        #producer.flush()
+        #producer.close()
