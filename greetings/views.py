@@ -77,14 +77,31 @@ class greetingsList(APIView):
 
     template = 'index.html';
     def get(self,request):
-        cursor = connection.cursor()
-        recordsMovimento = MovimentoOne.objects.all().filter(email=request.user.username)
-        serializer = MovimentoOneSerializer(recordsMovimento, many=True)
+        #cursor = connection.cursor()
+
+        topic = request.user.username.replace("@", "")
+
+        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.192.64:9092'], api_version=(0, 10, 1),
+        auto_offset_reset='earliest', 
+        #group_id='myTestGroupId', 
+        consumer_timeout_ms=3000)
+        #ip dinamico della macchina di dario
+        consumer.subscribe(topic)
+
+        movimentoList = []
+
+        for message in consumer:
+            movimentoList.append(json.loads(message.value))
+
+
+
+        #recordsMovimento = MovimentoOne.objects.all().filter(email=request.user.username)
+        #serializer = MovimentoOneSerializer(recordsMovimento, many=True)
         recordsMovimentoHistogram = MovimentoHistogramOne.objects.all().filter(email=request.user.username)
         serializerHistogram = MovimentoHistogramSerializer(recordsMovimentoHistogram, many=True)
         recordsMovimentoLine = MovimentoLineOne.objects.all().filter(email=request.user.username)
         serializerLine = MovimentoLineSerializer(recordsMovimentoLine, many=True)
-        return render(request, self.template, {'greetings_movimentoone': serializer.data, 'loggedas': request.user.username, 'greetings_movimentohistogram': serializerHistogram.data, 'greetings_movimentoline': serializerLine.data })
+        return render(request, self.template, {'greetings_movimentoone': movimentoList, 'loggedas': request.user.username, 'greetings_movimentohistogram': serializerHistogram.data, 'greetings_movimentoline': serializerLine.data })
 
 class insert(APIView):
     def __maxId(self):
@@ -147,7 +164,7 @@ class insert(APIView):
             movimento.causale = "auto generated " + sysdateString
             
             jsonStr = json.dumps({'id' : movimento.id, 
-                'datamov': str(movimento.datamov.day) + "-" + str(movimento.datamov.month) + "-" + str(movimento.datamov.year), 
+                'datamov': movimento.datamov.strftime("%Y-%m-%d"),
                 'email': movimento.email, 
                 'importo': movimento.importo, 
                 'causale': movimento.causale})
