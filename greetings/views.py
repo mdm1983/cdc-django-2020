@@ -29,6 +29,7 @@ from kafka import KafkaConsumer
 import json
 
 from datetime import datetime
+import datetime as datetimealias
 from random import randrange
 from datetime import timedelta
 from random import seed
@@ -43,6 +44,10 @@ from .producer import producer
 from kafka import TopicPartition
 
 from time import sleep
+
+import json
+
+from django.forms.models import model_to_dict
 
 # Create your views here.
 def index(request):
@@ -97,14 +102,35 @@ class insert(APIView):
         random_second = randrange(int_delta)
         return start + timedelta(seconds=random_second)
 
+    def __myconverter(self, o):
+        if isinstance(o, datetimealias.datetime):
+            print('datetime ' + o)
+            return o.isoformat()
+        #elif isinstance(o, date):
+            #return o.isoformat()
+
     def get(self, request):
+
+        email = request.GET.get('email', "")
+
+        topic = email.replace("@", "")
+
+        # To consume latest messages and auto-commit offsets
+        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.192.64:9092'], api_version=(0, 10, 1),
+        auto_offset_reset='earliest', 
+        #group_id='myTestGroupId', 
+        consumer_timeout_ms=3000)
+        #ip dinamico della macchina di dario
+
+        consumer.subscribe(topic)
 
         d1 = datetime.strptime('1/1/2020 GMT', '%m/%d/%Y %Z')
         d2 = datetime.strptime('12/31/2020 GMT', '%m/%d/%Y %Z')
-        email = request.GET.get('email', "")
+        
         sysdate = timezone.now()
         sysdateString = str(sysdate.day) + "." + str(sysdate.month) + "." + str(sysdate.year)
         negativo = False
+        producer = KafkaProducer(bootstrap_servers=['10.7.192.64:9092'], api_version=(0, 10, 1))
 
         for _ in range(50):
             movimento = MovimentoOne()
@@ -119,9 +145,19 @@ class insert(APIView):
                 movimento.importo = randint(1, 100)
                 negativo = True
             movimento.causale = "auto generated " + sysdateString
+            
+            jsonStr = json.dumps({'id' : movimento.id, 
+                'datamov': str(movimento.datamov.day) + "-" + str(movimento.datamov.month) + "-" + str(movimento.datamov.year), 
+                'email': movimento.email, 
+                'importo': movimento.importo, 
+                'causale': movimento.causale})
+            producer.send(topic, jsonStr.encode('utf-8'))
             movimento.save()
 
-
+        #i=0
+        #for message in consumer:
+            #print(str(i) + " " + message.value.decode("utf-8"))
+            #i=i+1
         
         return HttpResponseRedirect('/greetings/getList')
 
