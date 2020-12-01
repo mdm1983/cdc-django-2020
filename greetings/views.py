@@ -91,6 +91,7 @@ class greetingsList(APIView):
         movimentoList = []
 
         for message in consumer:
+            print('read from topic ' + topic + ": " + message.value.decode("utf-8"))
             movimentoList.append(json.loads(message.value))
 
 
@@ -169,6 +170,7 @@ class insert(APIView):
                 'importo': movimento.importo, 
                 'causale': movimento.causale})
             producer.send(topic, jsonStr.encode('utf-8'))
+            print('sent on topic ' + topic + ": " + jsonStr)
             movimento.save()
 
         #i=0
