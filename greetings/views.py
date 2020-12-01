@@ -50,7 +50,7 @@ def index(request):
     KAFKA_TOPIC = 'Topic5'
 
     # To consume latest messages and auto-commit offsets
-    consumer = KafkaConsumer (KAFKA_TOPIC,bootstrap_servers = ['10.7.9.71:9092'], api_version=(0, 10, 1),
+    consumer = KafkaConsumer (KAFKA_TOPIC,bootstrap_servers = ['10.7.192.64:9092'], api_version=(0, 10, 1),
     auto_offset_reset='earliest', 
     #group_id='myTestGroupId', 
     consumer_timeout_ms=3000)
@@ -123,7 +123,7 @@ class insert(APIView):
 
 
         
-        return HttpResponse("auto generated " + sysdateString)
+        return HttpResponseRedirect('/greetings/getList')
 
 
 
