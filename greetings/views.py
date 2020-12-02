@@ -55,7 +55,7 @@ def index(request):
     KAFKA_TOPIC = 'Topic5'
 
     # To consume latest messages and auto-commit offsets
-    consumer = KafkaConsumer (KAFKA_TOPIC,bootstrap_servers = ['10.7.192.64:9092'], api_version=(0, 10, 1),
+    consumer = KafkaConsumer (KAFKA_TOPIC,bootstrap_servers = ['10.7.193.164:9092'], api_version=(0, 10, 1),
     auto_offset_reset='earliest', 
     #group_id='myTestGroupId', 
     consumer_timeout_ms=3000)
@@ -81,7 +81,7 @@ class greetingsList(APIView):
 
         topic = request.user.username.replace("@", "")
 
-        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.192.64:9092'], api_version=(0, 10, 1),
+        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.193.164:9092'], api_version=(0, 10, 1),
         auto_offset_reset='earliest', 
         #group_id='myTestGroupId', 
         consumer_timeout_ms=3000)
@@ -120,6 +120,13 @@ class insert(APIView):
         random_second = randrange(int_delta)
         return start + timedelta(seconds=random_second)
 
+    def __random_causale(self, importo):
+        if  (importo>0):
+            causali = ['accredito stipendio', 'cashback', 'bonifico']
+        else:
+            causali = ['ricarica paypal', 'pagamento presso agip', 'pagamento bolletta E-ON']
+        return causali[randint(0, 2)]
+
     def __myconverter(self, o):
         if isinstance(o, datetimealias.datetime):
             print('datetime ' + o)
@@ -134,7 +141,7 @@ class insert(APIView):
         topic = email.replace("@", "")
 
         # To consume latest messages and auto-commit offsets
-        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.192.64:9092'], api_version=(0, 10, 1),
+        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.193.164:9092'], api_version=(0, 10, 1),
         auto_offset_reset='earliest', 
         #group_id='myTestGroupId', 
         consumer_timeout_ms=3000)
@@ -148,7 +155,7 @@ class insert(APIView):
         sysdate = timezone.now()
         sysdateString = str(sysdate.day) + "." + str(sysdate.month) + "." + str(sysdate.year)
         negativo = False
-        producer = KafkaProducer(bootstrap_servers=['10.7.192.64:9092'], api_version=(0, 10, 1))
+        producer = KafkaProducer(bootstrap_servers=['10.7.193.164:9092'], api_version=(0, 10, 1))
 
         for _ in range(50):
             movimento = MovimentoOne()
@@ -162,7 +169,7 @@ class insert(APIView):
             else:
                 movimento.importo = randint(1, 100)
                 negativo = True
-            movimento.causale = "auto generated " + sysdateString
+            movimento.causale = self.__random_causale(movimento.importo)
             
             jsonStr = json.dumps({'id' : movimento.id, 
                 'datamov': movimento.datamov.strftime("%Y-%m-%d"),
