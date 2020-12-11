@@ -55,7 +55,7 @@ def index(request):
     KAFKA_TOPIC = 'Topic5'
 
     # To consume latest messages and auto-commit offsets
-    consumer = KafkaConsumer (KAFKA_TOPIC,bootstrap_servers = ['10.7.193.164:9092'], api_version=(0, 10, 1),
+    consumer = KafkaConsumer (KAFKA_TOPIC,bootstrap_servers = ['10.7.195.124:9092'], api_version=(0, 10, 1),
     auto_offset_reset='earliest', 
     #group_id='myTestGroupId', 
     consumer_timeout_ms=3000)
@@ -81,7 +81,7 @@ class greetingsList(APIView):
 
         topic = request.user.username.replace("@", "")
 
-        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.193.164:9092'], api_version=(0, 10, 1),
+        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.195.124:9092'], api_version=(0, 10, 1),
         auto_offset_reset='earliest', 
         #group_id='myTestGroupId', 
         consumer_timeout_ms=3000)
@@ -122,9 +122,9 @@ class insert(APIView):
 
     def __random_causale(self, importo):
         if  (importo>0):
-            causali = ['accredito stipendio', 'cashback', 'bonifico']
+            causali = ['accredito stipendio', 'cashback', 'bonifico ricevuto']
         else:
-            causali = ['ricarica paypal', 'pagamento presso agip', 'pagamento bolletta E-ON']
+            causali = ['ricarica paypal', 'pagamento presso negozio', 'pagamento bolletta elettrica']
         return causali[randint(0, 2)]
 
     def __myconverter(self, o):
@@ -141,7 +141,7 @@ class insert(APIView):
         topic = email.replace("@", "")
 
         # To consume latest messages and auto-commit offsets
-        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.193.164:9092'], api_version=(0, 10, 1),
+        consumer = KafkaConsumer (topic,bootstrap_servers = ['10.7.195.124:9092'], api_version=(0, 10, 1),
         auto_offset_reset='earliest', 
         #group_id='myTestGroupId', 
         consumer_timeout_ms=3000)
@@ -155,7 +155,7 @@ class insert(APIView):
         sysdate = timezone.now()
         sysdateString = str(sysdate.day) + "." + str(sysdate.month) + "." + str(sysdate.year)
         negativo = False
-        producer = KafkaProducer(bootstrap_servers=['10.7.193.164:9092'], api_version=(0, 10, 1))
+        producer = KafkaProducer(bootstrap_servers=['10.7.195.124:9092'], api_version=(0, 10, 1))
 
         for _ in range(50):
             movimento = MovimentoOne()
